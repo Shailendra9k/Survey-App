@@ -27,11 +27,28 @@ class Survey extends Component {
     });
   }
 
-  answerSelected() {
-    // work on thiis
+  answerSelected(event) {
+    let answers = this.state.answers;
+    if (event.target.name === "answer1") {
+      answers.answer1 = event.target.value;
+    } else if (event.target.name === "answer2") {
+      answers.answer2 = event.target.value;
+    } else if (event.target.name === "answer3") {
+      answers.answer3 = event.target.value;
+    }
+    this.setState({ answers: answers }, function() {
+      console.log(this.state);
+    });
   }
   questionSubmit() {
-    //Work on this
+    firebase
+      .database()
+      .ref("survey/" + this.state.uid)
+      .set({
+        studentName: this.state.studentName,
+        answers: this.state.answers
+      });
+    this.setState({ isSubmitted: true });
   }
 
   constructor(props) {
@@ -39,7 +56,7 @@ class Survey extends Component {
 
     this.state = {
       uid: uuid.v1(),
-      studentName: "Shailendra",
+      studentName: "",
       answers: {
         answer1: "",
         answer2: "",
@@ -57,21 +74,20 @@ class Survey extends Component {
     var questions;
 
     if (this.state.studentName === "" && this.state.isSubmitted === false) {
-      studentName =
-        ((
-          <div>
-            <h1>Hey Student, please let us know your name:</h1>
-            <form onSubmit={this.nameSubmit}>
-              <input
-                className="namy"
-                type="text"
-                placeholder="Enter your name"
-                ref="name"
-              />
-            </form>
-          </div>
-        ),
-        (questions = ""));
+      studentName = (
+        <div>
+          <h1>Hey Student, please let us know your name:</h1>
+          <form onSubmit={this.nameSubmit}>
+            <input
+              className="namy"
+              type="text"
+              placeholder="Enter your name"
+              ref="name"
+            />
+          </form>
+        </div>
+      );
+      questions = "";
     } else if (
       this.state.studentName !== "" &&
       this.state.isSubmitted === false
@@ -157,7 +173,13 @@ class Survey extends Component {
           </form>
         </div>
       );
+    } else if (
+      this.state.studentName !== "" &&
+      this.state.isSubmitted === true
+    ) {
+      studentName = <h1>Thanks, {this.state.studentName} </h1>;
     }
+
     return (
       <div>
         {studentName}
