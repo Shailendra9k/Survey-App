@@ -177,7 +177,9 @@ class Survey extends Component {
       this.state.studentName !== "" &&
       this.state.isSubmitted === true
     ) {
-      studentName = <h1>Thanks, {this.state.studentName} </h1>;
+      studentName = (
+        <h1>Thanks {this.state.studentName}, we have saved your answers. </h1>
+      );
     }
 
     return (
